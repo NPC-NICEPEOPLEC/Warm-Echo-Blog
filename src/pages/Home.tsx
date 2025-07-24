@@ -1,17 +1,14 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
 import Header from "@/components/Header";
 import Hero from "@/components/Hero";
 import Footer from "@/components/Footer";
 import ArticleCard, { Article } from "@/components/ArticleCard";
 import ArticleDetail from "@/pages/ArticleDetail";
-import FeishuDebug from "@/pages/FeishuDebug";
 import { useFeishuData } from "@/hooks/useFeishuData";
-import { Loader2, RefreshCw } from "lucide-react";
+import { Loader2 } from "lucide-react";
 
 export default function Home() {
   const [selectedArticle, setSelectedArticle] = useState<Article | null>(null);
-  const [showDebug, setShowDebug] = useState(false);
   const { articles, loading, error, refetch } = useFeishuData();
 
   const handleArticleClick = (article: Article) => {
@@ -39,21 +36,7 @@ export default function Home() {
     );
   }
 
-  if (showDebug) {
-    return (
-      <div>
-        <div className="fixed top-4 right-4 z-50">
-          <button
-            onClick={() => setShowDebug(false)}
-            className="bg-primary text-white px-4 py-2 rounded-lg hover:bg-primary/90"
-          >
-            返回首页
-          </button>
-        </div>
-        <FeishuDebug />
-      </div>
-    );
-  }
+  // 移除飞书调试页面逻辑
 
   // 显示首页
   return (
@@ -72,7 +55,7 @@ export default function Home() {
               今日有些事让人想了很久
             </h2>
             <p className="text-text-secondary text-sm">
-              {loading ? '正在从飞书获取最新内容...' : `共 ${articles.length} 篇文章`}
+              共 {articles.length} 篇文章
             </p>
           </div>
           
@@ -80,33 +63,16 @@ export default function Home() {
           {loading && (
             <div className="flex justify-center items-center py-12">
               <Loader2 className="w-8 h-8 animate-spin text-primary" />
-              <span className="ml-2 text-text-secondary">正在获取飞书数据...</span>
+              <span className="ml-2 text-text-secondary">正在获取最新内容...</span>
             </div>
           )}
 
-          {/* 错误状态 */}
+          {/* 错误状态 - 隐藏调试按钮，只显示错误信息 */}
           {error && (
             <div className="text-center py-12">
-              <p className="text-red-500 mb-4">数据获取失败: {error}</p>
-              <div className="flex justify-center gap-4">
-                <button 
-                  onClick={refetch}
-                  className="inline-flex items-center px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 transition-colors"
-                >
-                  <RefreshCw className="w-4 h-4 mr-2" />
-                  重新获取
-                </button>
-                <button 
-                  onClick={() => setShowDebug(true)}
-                  className="inline-flex items-center px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors"
-                >
-                  飞书连接诊断
-                </button>
-              </div>
+              <p className="text-red-500 mb-4">暂时无法获取最新内容，请稍后再试</p>
             </div>
           )}
-
-          {/* 调试按钮已隐藏 */}
 
           {/* 文章卡片网格 */}
           {!loading && (
